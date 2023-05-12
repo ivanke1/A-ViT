@@ -220,7 +220,7 @@ def main(args):
 
     cudnn.benchmark = True
 
-    dataset_train, args.nb_classes = build_dataset(is_train=True, args=args)
+    dataset_train, args.nb_classes = build_dataset(is_train=False, args=args)
     dataset_val, _ = build_dataset(is_train=False, args=args)
 
     if True:
@@ -453,8 +453,10 @@ def main(args):
                     'scaler': loss_scaler.state_dict(),
                     'args': args,
                 }, checkpoint_path)
-
+        
+        start_inf = time.time()
         test_stats = evaluate(data_loader_val, model, device, epoch, tf_writer=tf_writer, args=args)
+        print(time.time() - start_inf)
 
         print(f"Accuracy of the network on the {len(dataset_val)} test images: {test_stats['acc1']:.1f}%")
         max_accuracy = max(max_accuracy, test_stats["acc1"])
