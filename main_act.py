@@ -348,15 +348,6 @@ def main(args):
         print('Setting h gate scale as {} and bias as {}'.format(args.gate_scale, args.gate_center))
 
     model.to(device)
-
-    #     throughput test from dynamicvit repo
-    if utils.is_main_process() and args.throughput:
-        print('# throughput test')
-        image = torch.randn(32, 3, args.input_size, args.input_size)
-        throughput(image, model)
-        del image
-        import sys
-        sys.exit(1)
         
     model_ema = None
     if args.model_ema:
@@ -446,6 +437,15 @@ def main(args):
         # This function can embed in other analysis too. This is a quick example code only for the visualize function.
         return
 
+    #     throughput test from dynamicvit repo
+    if utils.is_main_process() and args.throughput:
+        print('# throughput test')
+        image = torch.randn(32, 3, args.input_size, args.input_size)
+        throughput(image, model)
+        del image
+        import sys
+        sys.exit(1)
+        
     if args.eval:
         start_inf = time.time()
         test_stats = evaluate(data_loader_val, model, device, tf_writer=tf_writer, epoch=0, args=args)
